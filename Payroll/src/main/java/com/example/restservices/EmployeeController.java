@@ -1,7 +1,12 @@
 package com.example.restservices;
 
-import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import java.util.List;
 
 @RestController
@@ -18,15 +23,27 @@ public class EmployeeController {
     }
 
     @PostMapping("/employees")
-    Employee newEmployee(@RequestBody Employee newEmployee) {
+    public Employee addEmployee(@RequestBody Employee newEmployee) {
         return repository.save(newEmployee);
     }
 
+//    @GetMapping("/employees/{id}")
+//    Employee one(@PathVariable Long id) {
+//        return repository.findById(id)
+//                .orElseThrow(() -> new EmployeeNotFoundException(id));
+//    }
+
     @GetMapping("/employees/{id}")
-    Employee one(@PathVariable Long id) {
-        return repository.findById(id)
+    public EntityModel<Employee> one(@PathVariable Long id) {
+
+        Employee employee = repository.findById(id) //
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
+
+        return EntityModel.of(employee, //
+                linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
+                linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
     }
+
 
     @PutMapping("/employees/{id}")
     Employee replaceEmployee(@RequestBody Employee newEmployee,@PathVariable Long id) {
