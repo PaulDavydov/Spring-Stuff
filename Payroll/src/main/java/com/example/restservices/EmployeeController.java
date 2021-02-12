@@ -2,12 +2,14 @@ package com.example.restservices;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class EmployeeController {
@@ -18,8 +20,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees")
-    List<Employee> all() {
-        return repository.findAll();
+    CollectionModel<EntityModel<Employee>> all() {
+        List<EntityModel<Employee>> employess = repository.findAll().stream().map(employee -> EntityModel.of(employee,
+                linkTo(methodOn(EmployeeController.class).one(employee.getId())).withSelfRel(),
+                linkTo(methodOn(EmployeeController.class).all()).withRel("employees")))
+                .collect(Collectors.toList());
+        return CollectionModel.of(employess,linkTo(methodOn(EmployeeController.class).all()).withSelfRel());
     }
 
     @PostMapping("/employees")
