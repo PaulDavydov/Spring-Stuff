@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+// Basically redirects the logic for printing a error, towards a custom response.
 @ControllerAdvice
 class EmployeeNotFoundAdvice {
     @ResponseBody

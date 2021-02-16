@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class LoadDatabase {
     private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
-
+    //Initializes the database and adds a few elements to the database
     @Bean
     CommandLineRunner initDatabase(EmployeeRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new Employee("Bilbo Baggins",
+            log.info("Preloading " + repository.save(new Employee("Bilbo", "Baggins",
                     "burglar")));
-            log.info("Preloading " + repository.save(new Employee("Frodo Baggins",
+            log.info("Preloading " + repository.save(new Employee("Frodo", "Baggins",
                     "thief")));
         };
     }
