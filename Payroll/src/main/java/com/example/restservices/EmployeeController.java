@@ -64,23 +64,28 @@ public class EmployeeController {
     // Updates employee based on link
     @PutMapping("/employees/{id}")
     /* here we are editing the employee that we want based on the ID we provide.
-    * here we set the roles and name based on the "new employee" that we are providing.*/
-    Employee replaceEmployee(@RequestBody Employee newEmployee,@PathVariable Long id) {
-        return repository.findById(id)
-                .map(employee -> {
-                    employee.setName(newEmployee.getName());
-                    employee.setRole(newEmployee.getRole());
-                    return repository.save(employee);
-                })
-                .orElseGet(() -> {
-                    newEmployee.setId(id);
-                    return repository.save(newEmployee);
-                });
+    * here we set the roles and name based on the "new employee" that we are providing.
+    * We also wrap the Employee object into a EntityModel using the assembler we defined.
+    * Then we grab the link for it that was created from the assembler.*/
+    ResponseEntity<?> replaceEmployee(@RequestBody Employee newEmployee,@PathVariable Long id) {
+        Employee updatedEmployee = repository.findById(id).map(employee -> {
+            employee.setName(newEmployee.getName());
+            employee.setRole(newEmployee.getRole());
+            return  repository.save(employee);
+        }).orElseGet(() -> {
+            newEmployee.setId(id);
+            return repository.save(newEmployee);
+        });
+
+        EntityModel<Employee> entityModel = assembler.toModel(updatedEmployee);
+
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
-    // Just deletes the employee based on the ID we provide.
+    // Just deletes the employee based on the ID we provide. Returns a 204 no response.
     @DeleteMapping("/employees/{id}")
-    void deleteEmployee(@PathVariable Long id) {
+    ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
 
     }
 
