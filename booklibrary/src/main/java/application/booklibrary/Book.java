@@ -8,11 +8,11 @@ import java.util.Objects;
 //Correlates with a table in the database
 @Entity
 public class Book {
-    private @Id
-    @GeneratedValue Long id;
+    private @Id @GeneratedValue Long id;
     private String book_Name;
     private String author;
     private int publication_Year;
+    //private String genre;
 
     public Book () {}
     public Book(String name, String author, int year) {
