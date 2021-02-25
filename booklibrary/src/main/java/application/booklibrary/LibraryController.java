@@ -5,6 +5,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.persistence.PreUpdate;
 import java.util.List;
 
 @RestController
@@ -48,5 +49,9 @@ public class LibraryController {
             newBook.setId(id);
             return repository.save(newBook);
         });
+    }
+    @PostMapping("/books")
+    public Book newBook(@RequestBody Book newBook) {
+        return repository.save(newBook);
     }
 }
